@@ -30,14 +30,18 @@ const VerifyAccount = () => {
                     code:data.code
                 }
             )
+            if(!response){
+              toast('Incorrect verify code')
+            }
             toast(response.data.message)
-            router.replace('/sign-in')
+            router.replace('/dashboard')
         } catch (error) {
             console.error("Error in signup user")
                 const axiosError=error as AxiosError<ApiResponse>
                 toast(axiosError.response?.data.message)
             }
     }
+   
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-800">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">

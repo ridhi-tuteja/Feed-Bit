@@ -3,11 +3,14 @@ import UserModel from "@/model/user.model";
 import { authOptions } from "../../auth/[...nextauth]/option";
 import dbConnect from "@/lib/dbConnect";
 import { User } from "next-auth";
+import { NextRequest } from "next/server";
 
-export async function DELETE(request:Request,{params}:{params:{messageid:string}}){
-    const messageId=params.messageid
-    await dbConnect();
-
+export async function DELETE(
+  req: NextRequest,
+  context: { params: { messageid: string } }
+): Promise<Response> {
+  const { params } = context;
+  const { messageid } = await params; 
      const session=await getServerSession(authOptions)
     const user:User=session?.user as User  //Assertion
 
@@ -28,13 +31,13 @@ export async function DELETE(request:Request,{params}:{params:{messageid:string}
         // })
         const updateResult = await UserModel.updateOne(
       { _id: user._id },
-      { $pull: { messages: { _id: messageId } } }
+      { $pull: { messages: { _id: messageid } } }
     );
 
         if(updateResult.modifiedCount==0){
             return Response.json(
             {
-                sucess:false,
+                success:false,
                 message:"Messages not found or already deleted"
             },
             {status:404}
@@ -42,7 +45,7 @@ export async function DELETE(request:Request,{params}:{params:{messageid:string}
         }
         return Response.json(
             {
-                sucess:true,
+                success:true,
                 message:"Deleted successfully"
             },
             {status:200}
@@ -51,10 +54,11 @@ export async function DELETE(request:Request,{params}:{params:{messageid:string}
         console.log("Error in deleting route: ",error)
         return Response.json(
             {
-                sucess:false,
+                success:false,
                 message:"Error deleting messages"
             },
             {status:500}
         )
     }
 }
+

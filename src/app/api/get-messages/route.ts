@@ -40,13 +40,19 @@ export async function GET(request:Request){
             {status:401}
         )
         }
-        return Response.json(
-            {
-                success:true,
-                message:user[0].messages
-            },
-            {status:200}
-        )
+        // return Response.json(
+        //     {
+        //         success:true,
+        //         message:user[0].messages
+        //     },
+        //     {status:200}
+        // )
+        return Response.json({
+            success: true,
+            message: "Messages fetched successfully",
+            messages: user[0].messages
+            }, { status: 200 });
+
     } catch (error) {
         console.log("Error in getting mesages");
         return Response.json(

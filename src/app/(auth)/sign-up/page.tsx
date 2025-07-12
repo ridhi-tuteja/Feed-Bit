@@ -66,6 +66,7 @@ const page = () => {
     try {
       const response=await axios.post<ApiResponse>('/api/sign-up',data)
       toast(response.data.message)
+
       router.replace(`/verify/${username}`)
       setIsSubmitting(false)
 

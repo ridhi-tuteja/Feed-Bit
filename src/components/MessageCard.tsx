@@ -2,10 +2,6 @@
 
 import {
   Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -21,7 +17,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Button } from "@react-email/components"
 import { X } from "lucide-react"
 import { Message } from "@/model/user.model"
 import { ApiResponse } from "@/types/ApiResponse"
@@ -33,38 +28,48 @@ type messageCardProps={
     onMessageDelete:(messageid:string)=>void
 }
 
-const MessageCard = ({message,onMessageDelete}:messageCardProps) => {
-    const handleDeleteConfirm=async()=>{
-        const response =await axios.delete<ApiResponse>(`api/delete-message/${message._id}`)
-        toast(response.data.message)
+const MessageCard = ({ message, onMessageDelete }: messageCardProps) => {
+  const handleDeleteConfirm = async () => {
+    try {
+      const response = await axios.delete<ApiResponse>(
+        `api/delete-message/${message._id}`
+      );
+      toast(response.data.message);
+
+      // ✅ UI sync — remove from state immediately
+      onMessageDelete(message._id);
+    } catch (error) {
+      toast("Failed to delete the message.");
     }
+  };
+
   return (
-    <Card>
-        <CardHeader>
-            <CardTitle>Card Title</CardTitle>
-            <AlertDialog>
-                <AlertDialogTrigger asChild>
-                    <Button><X className='w-5 h-5'/></Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete your
-                        account and remove your data from our servers.
-                    </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDeleteConfirm}>Continue</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-            <CardDescription>Card Description</CardDescription>
-            <CardAction>Card Action</CardAction>
-        </CardHeader>
-</Card>
-  )
-}
+    <Card className="relative p-4">
+      <CardHeader>
+        <CardTitle className="text-lg text-gray-800">{message.content}</CardTitle>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <button className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-1 rounded">
+              <X className="w-5 h-5" />
+            </button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete your
+                message from our system.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteConfirm}>Continue</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </CardHeader>
+    </Card>
+  );
+};
 
 export default MessageCard
