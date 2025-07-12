@@ -8,7 +8,7 @@ import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CardHeader, CardContent, Card } from '@/components/ui/card';
-import { useCompletion } from '@ai-sdk/react'
+// //import { useCompletion } from '@ai-sdk/react'
 
 import {
   Form,
@@ -29,9 +29,8 @@ import { messageSchema } from '@/schemas/messageSchema';
 const specialChar = '||';
 
 const parseStringMessages = (messageString: string): string[] => {
-  return messageString.split(specialChar);
+  return messageString.split(specialChar).map(s => s.trim()).filter(s => s.length > 0);
 };
-
 const initialMessageString =
   "What's your favorite movie?||Do you have any pets?||What's your dream job?";
 
@@ -39,15 +38,9 @@ export default function SendMessage() {
   const params = useParams<{ username: string }>();
   const username = params.username;
 
-  const {
-    complete,
-    completion,
-    isLoading: isSuggestLoading,
-    error,
-  } = useCompletion({
-    api: '/api/suggest-messages',
-    initialCompletion: initialMessageString,
-  });
+const [suggestedMessages, setSuggestedMessages] = useState<string[]>([]);
+const [isSuggestLoading, setIsSuggestLoading] = useState(false);
+
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
@@ -79,14 +72,47 @@ export default function SendMessage() {
     }
   };
 
-  const fetchSuggestedMessages = async () => {
-    try {
-      complete('');
-    } catch (error) {
-      console.error('Error fetching messages:', error);
-      // Handle error appropriately
+const fetchSuggestedMessages = async () => {
+  try {
+    setIsSuggestLoading(true);
+    const res = await fetch('/api/suggest-messages', {
+      method: 'POST',
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
-  };
+
+    const reader = res.body?.getReader();
+    if (!reader) {
+      throw new Error("Failed to get stream reader.");
+    }
+    
+    const decoder = new TextDecoder();
+    let text = '';
+    
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        break;
+      }
+      text += decoder.decode(value, { stream: true });
+    }
+  
+    const parsedMessages = parseStringMessages(text);
+    if (parsedMessages.length === 0) {
+        throw new Error('Received an empty response from the server.');
+    }
+    //console.log('Parsed questions:', parsedMessages); 
+    setSuggestedMessages(parsedMessages);
+    
+  } catch (err: any) {
+    console.error('Suggest API failed:', err);
+    toast.error('Failed to fetch suggestions');
+  } finally {
+    setIsSuggestLoading(false);
+  }
+};
 
   return (
     <div className="container mx-auto my-8 p-6 bg-white rounded max-w-4xl">
@@ -142,28 +168,27 @@ export default function SendMessage() {
           <CardHeader>
             <h3 className="text-xl font-semibold">Messages</h3>
           </CardHeader>
-          <CardContent className="flex flex-col space-y-4">
-            {error ? (
-              <p className="text-red-500">{error.message}</p>
-            ) : (
-              parseStringMessages(completion).map((message, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  className="mb-2"
-                  onClick={() => handleMessageClick(message)}
-                >
-                  {message}
-                </Button>
-              ))
-            )}
-          </CardContent>
+         <CardContent className="flex flex-col space-y-4">
+            {(suggestedMessages.length === 0
+          ? parseStringMessages(initialMessageString)
+          : suggestedMessages
+        ).map((message, index) => (
+          <Button
+            key={index}
+            variant="outline"
+            className="mb-2"
+            onClick={() => handleMessageClick(message)}
+          >
+            {message}
+          </Button>
+        ))}
+        </CardContent>
         </Card>
       </div>
       <Separator className="my-6" />
       <div className="text-center">
         <div className="mb-4">Get Your Message Board</div>
-        <Link href={'/sign-up'}>
+        <Link href={'/sign-in'}>
           <Button>Create Your Account</Button>
         </Link>
       </div>
