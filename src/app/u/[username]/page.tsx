@@ -106,7 +106,7 @@ const fetchSuggestedMessages = async () => {
     //console.log('Parsed questions:', parsedMessages); 
     setSuggestedMessages(parsedMessages);
     
-  } catch (err: any) {
+  } catch (err) {
     console.error('Suggest API failed:', err);
     toast.error('Failed to fetch suggestions');
   } finally {

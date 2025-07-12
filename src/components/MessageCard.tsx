@@ -39,6 +39,7 @@ const MessageCard = ({ message, onMessageDelete }: messageCardProps) => {
       // ✅ UI sync — remove from state immediately
       onMessageDelete(message._id);
     } catch (error) {
+      console.log("Error in deleting message: ",error)
       toast("Failed to delete the message.");
     }
   };

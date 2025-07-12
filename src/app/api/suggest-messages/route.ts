@@ -20,7 +20,7 @@ export async function POST(req: Request) {
 
     const readableStream = new ReadableStream({
       async start(controller) {
-        const textDecoder = new TextDecoder();
+        //const textDecoder = new TextDecoder();
         for await (const chunk of asyncGenerator) {
           const text = chunk.text();
           if (text) {
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       },
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Gemini API error:', error);
     
     const fallbackText = "What's a simple thing that makes you happy?||What's a fun fact about yourself?||What's a song you can't stop listening to?";
