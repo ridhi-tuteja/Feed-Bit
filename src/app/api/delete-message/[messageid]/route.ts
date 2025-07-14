@@ -62,9 +62,9 @@
 // }
 
 import { getServerSession } from "next-auth";
-import { NextRequest } from "next/server";
 import { authOptions } from "../../auth/[...nextauth]/option";
 import UserModel from "@/model/user.model";
+import { NextRequest } from "next/server";
 import { User } from "next-auth";
 
 interface SessionUser extends User {
@@ -73,13 +73,12 @@ interface SessionUser extends User {
 
 export async function DELETE(
   req: NextRequest,
-  
-  { params }: { params: { messageid: string } }
+  context: { params: { messageid: string } } // ✅ REMOVE THIS or let it infer!
 ): Promise<Response> {
-  const { messageid } = params;
+  // ✅ Let it infer correctly — avoid typing the context manually
+  const { messageid } = context.params;
 
   const session = await getServerSession(authOptions);
-
   if (!session || !session.user) {
     return Response.json(
       {
