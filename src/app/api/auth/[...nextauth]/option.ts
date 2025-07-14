@@ -6,11 +6,6 @@ import dbConnect from "@/lib/dbConnect";
 import { User } from "next-auth";
 import { RequestInternal } from "next-auth";
 
-// interface Credentials {
-//   identifier: string;
-//   password: string;
-// }
-
 interface AuthorizedUser extends User {
   _id: string;
   username: string;
@@ -28,7 +23,6 @@ export const authOptions : NextAuthOptions={
                 }, 
                 async authorize(
                     credentials: Record<"identifier" | "password", string> | undefined,
-                    req: Pick<RequestInternal, "body" | "query" | "headers" | "method">
                     ): Promise<AuthorizedUser | null> {
                     if (!credentials) return null;   
                 //async authorize(credentials:any):Promise<any> {
@@ -65,8 +59,9 @@ export const authOptions : NextAuthOptions={
                     }else{
                         throw new Error("Invalid Password")
                     }
-                } catch (err:any) {
-                    throw new Error(err)
+                } catch (error) {
+                    console.log("Error: ", error);
+                    return null;
                 }
             }
         })
