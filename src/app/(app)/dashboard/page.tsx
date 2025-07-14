@@ -32,7 +32,7 @@ const Page = () => {
     resolver: zodResolver(acceptMessageSchema),
   });
 
-  const {register,watch,setValue,control}=form;
+  const {watch,setValue,control}=form;
   const acceptMessages=watch('acceptMessages')
   const fetchAcceptMessages=useCallback(async ()=>{
     setIsSwitchLoading(true)

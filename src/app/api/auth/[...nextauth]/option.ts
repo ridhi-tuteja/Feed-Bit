@@ -3,7 +3,20 @@ import CredentialsProvider  from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import UserModel from "@/model/user.model";
 import dbConnect from "@/lib/dbConnect";
+import { User } from "next-auth";
+import { RequestInternal } from "next-auth";
 
+// interface Credentials {
+//   identifier: string;
+//   password: string;
+// }
+
+interface AuthorizedUser extends User {
+  _id: string;
+  username: string;
+  isVerified: boolean;
+  isAcceptingMessages: boolean;
+}
 export const authOptions : NextAuthOptions={
     providers:[
         CredentialsProvider({
@@ -12,8 +25,13 @@ export const authOptions : NextAuthOptions={
             credentials: {
                 identifier: { label: "Email or Username", type: "text"},
                 password: { label: "Password", type: "password" }
-                },
-            async authorize(credentials:any):Promise<any> {
+                }, 
+                async authorize(
+                    credentials: Record<"identifier" | "password", string> | undefined,
+                    req: Pick<RequestInternal, "body" | "query" | "headers" | "method">
+                    ): Promise<AuthorizedUser | null> {
+                    if (!credentials) return null;   
+                //async authorize(credentials:any):Promise<any> {
                 await dbConnect()
 
                 try {
@@ -36,7 +54,9 @@ export const authOptions : NextAuthOptions={
                     if(isPasswordCorrect){
                         //return user
                       return {
-                        _id: user._id?.toString(),
+                        // _id: user._id?.toString(),
+                        _id: user._id!.toString(),
+                        id: user._id!.toString(),
                         email: user.email,
                         username: user.username,
                         isVerified: user.isVerified,

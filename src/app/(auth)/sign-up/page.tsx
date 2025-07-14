@@ -16,7 +16,7 @@ import Link from 'next/link'
 import { Loader2 } from 'lucide-react';
 
 
-const page = () => {
+const Page = () => {
   const [username,setUsername]=useState('')
   const [usernameMessage,setUsernameMessage]=useState('')
   const [isCheckingUsername,setIsCheckingUsername]=useState(false)
@@ -73,7 +73,7 @@ const page = () => {
     } catch (error) {
       console.error("Error in signup user")
           const axiosError=error as AxiosError<ApiResponse>
-          let errorMessage=axiosError.response?.data.message ?? "Error checking username"
+          const errorMessage=axiosError.response?.data.message ?? "Error checking username"
           toast(errorMessage)
           setIsSubmitting(false)
         }
@@ -174,4 +174,4 @@ const page = () => {
   );
 }
 
-export default page
+export default Page

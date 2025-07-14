@@ -11,13 +11,13 @@ export async function sendVerificationEmail(
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "gettruefeedback@gmail.com", // ✅ Your Gmail
-      pass: "hvgk jxoi acxu zwwa",        // ✅ Your App Password
+      user: "gettruefeedback@gmail.com",
+      pass: process.env.APP_PASSWORD      
     },
   });
 
   try {
-    // ✅ Render HTML from your React email component
+    
     const html = await render(verificationEmail({ username, otp: verifyCode }));
 
     const info = await transporter.sendMail({

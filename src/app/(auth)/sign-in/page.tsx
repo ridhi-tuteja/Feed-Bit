@@ -41,7 +41,7 @@ export default function SignInForm() {
     if(result?.url){
       router.replace(result.url)
     }
-    console.log("finally doneee")
+    //console.log("Signed In")
   }
 
   return (
