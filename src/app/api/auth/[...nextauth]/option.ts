@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 import UserModel from "@/model/user.model";
 import dbConnect from "@/lib/dbConnect";
 import { User } from "next-auth";
-import { RequestInternal } from "next-auth";
 
 interface AuthorizedUser extends User {
   _id: string;
