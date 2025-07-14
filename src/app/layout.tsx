@@ -13,14 +13,27 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // return (
+  //   <html lang="en">
+  //     <AuthProvider>
+  //       <body>
+  //         {children}
+  //         <Toaster />
+  //       </body>
+  //     </AuthProvider> 
+  //   </html>
+  // );
   return (
     <html lang="en">
-      <AuthProvider>
+      
         <body>
+          <AuthProvider>
           {children}
           <Toaster />
+          </AuthProvider> 
         </body>
-      </AuthProvider> 
+      
     </html>
   );
+
 }

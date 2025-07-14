@@ -13,7 +13,7 @@ import { Loader2, RefreshCcw } from 'lucide-react'
 import { User } from 'next-auth'
 import { useSession } from 'next-auth/react'
 import { useCallback, useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 const page = () => {
@@ -32,7 +32,7 @@ const page = () => {
     resolver: zodResolver(acceptMessageSchema),
   });
 
-  const {register,watch,setValue}=form;
+  const {register,watch,setValue,control}=form;
   const acceptMessages=watch('acceptMessages')
   const fetchAcceptMessages=useCallback(async ()=>{
     setIsSwitchLoading(true)
@@ -129,12 +129,25 @@ const page = () => {
       </div>
 
       <div className="mb-4">
-        <Switch
+        {/* <Switch
           {...register('acceptMessages')}
           checked={acceptMessages}
           onCheckedChange={handleSwitchChange}
           disabled={isSwitchLoading}
+        /> */}
+        <Controller
+          name="acceptMessages"
+          control={control}
+          defaultValue={false}
+          render={({ field }) => (
+            <Switch
+              checked={field.value}
+              onCheckedChange={field.onChange}
+              disabled={isSwitchLoading}
+            />
+          )}
         />
+        
         <span className="ml-2">
           Accept Messages: {acceptMessages ? 'On' : 'Off'}
         </span>
