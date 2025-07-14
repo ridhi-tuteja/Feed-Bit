@@ -71,20 +71,15 @@ interface SessionUser extends User {
   _id: string;
 }
 
-export async function DELETE(
-  req: NextRequest,
-  context: { params: { messageid: string } } // ✅ REMOVE THIS or let it infer!
-): Promise<Response> {
-  // ✅ Let it infer correctly — avoid typing the context manually
-  const { messageid } = context.params;
+export async function DELETE(req: NextRequest): Promise<Response> {
+  const url = new URL(req.url);
+  const segments = url.pathname.split("/");
+  const messageid = segments[segments.length - 1]; // Get the [messageid] from URL
 
   const session = await getServerSession(authOptions);
   if (!session || !session.user) {
     return Response.json(
-      {
-        success: false,
-        message: "Not Authenticated",
-      },
+      { success: false, message: "Not Authenticated" },
       { status: 401 }
     );
   }
@@ -99,28 +94,19 @@ export async function DELETE(
 
     if (updateResult.modifiedCount === 0) {
       return Response.json(
-        {
-          success: false,
-          message: "Message not found or already deleted",
-        },
+        { success: false, message: "Message not found or already deleted" },
         { status: 404 }
       );
     }
 
     return Response.json(
-      {
-        success: true,
-        message: "Deleted successfully",
-      },
+      { success: true, message: "Deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
     console.error("Error in delete route:", error);
     return Response.json(
-      {
-        success: false,
-        message: "Error deleting message",
-      },
+      { success: false, message: "Error deleting message" },
       { status: 500 }
     );
   }
