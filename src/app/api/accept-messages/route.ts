@@ -49,7 +49,7 @@ export async function POST(request:Request){
         )
 
     } catch (error) {
-        console.log("Error in getting message acceptance status")
+        console.log("Error in getting message acceptance status ",error)
         return Response.json(
             {
                 sucess:false,
@@ -60,7 +60,7 @@ export async function POST(request:Request){
     }
 }
 
-export async function GET(request:Request){
+export async function GET(){
     await dbConnect();
 
     const session=await getServerSession(authOptions)
@@ -97,7 +97,7 @@ export async function GET(request:Request){
             {status:201}
         )
     } catch (error) {
-        console.log("Failed to find user")
+        console.log("Failed to find user ",error)
         return Response.json(
             {
                 sucess:false,

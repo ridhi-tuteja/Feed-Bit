@@ -90,7 +90,7 @@ export default function SignInForm() {
         </Form>
         <div className="text-center mt-4">
           <p>
-            Don't have an account?{' '}
+            <span>{`Don't have an account?`}</span>
             <Link href="/sign-up" className="text-blue-600 hover:text-blue-800">
               Sign-up
             </Link>

@@ -142,7 +142,7 @@ const page = () => {
           render={({ field }) => (
             <Switch
               checked={field.value}
-              onCheckedChange={field.onChange}
+              onCheckedChange={handleSwitchChange}
               disabled={isSwitchLoading}
             />
           )}

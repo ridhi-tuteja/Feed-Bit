@@ -5,7 +5,7 @@ import dbConnect from "@/lib/dbConnect";
 import { User } from "next-auth";
 import mongoose from "mongoose";
 
-export async function GET(request:Request){
+export async function GET(){
     console.log("reached here")
     await dbConnect();
 
@@ -54,7 +54,7 @@ export async function GET(request:Request){
             }, { status: 200 });
 
     } catch (error) {
-        console.log("Error in getting mesages");
+        console.log("Error in getting mesages ",error);
         return Response.json(
             {
                 success:false,
