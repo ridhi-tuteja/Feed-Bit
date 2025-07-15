@@ -8,7 +8,7 @@ import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CardHeader, CardContent, Card } from '@/components/ui/card';
-// //import { useCompletion } from '@ai-sdk/react'
+//import { useCompletion } from '@ai-sdk/react'
 
 import {
   Form,
@@ -66,7 +66,7 @@ const [isSuggestLoading, setIsSuggestLoading] = useState(false);
       form.reset({ ...form.getValues(), content: '' });
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
-      toast(axiosError.response?.data.message ?? 'Failed to sent message')
+      toast(axiosError.response?.data.message ?? 'Failed to send message')
     } finally {
       setIsLoading(false);
     }
