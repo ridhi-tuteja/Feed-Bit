@@ -30,8 +30,16 @@ export async function GET(){
             {$sort:{'messages.createdAt':-1}},
             {$group:{_id:'$_id',messages:{$push:'$messages'}}}
         ])
-
-        if(!user || user.length===0){
+        if(user.length===0){
+            return Response.json(
+            {
+                success:false,
+                message:"No messages"
+            },
+            {status:401}
+        )
+        }
+        if(!user){
             return Response.json(
             {
                 success:false,

@@ -11,7 +11,7 @@ export async function sendVerificationEmail(
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "gettruefeedback@gmail.com",
+      user: "getfeedbit@gmail.com",
       pass: process.env.APP_PASSWORD      
     },
   });
@@ -21,9 +21,9 @@ export async function sendVerificationEmail(
     const html = await render(verificationEmail({ username, otp: verifyCode }));
 
     const info = await transporter.sendMail({
-      from: '"True Feedback" <gettruefeedback@gmail.com>',
+      from: '"Feedbit" <getfeedbit@gmail.com>',
       to: email,
-      subject: "True Feedback Verification Email",
+      subject: "Feedbit Verification Email",
       html,
     });
 
