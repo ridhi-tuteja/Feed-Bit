@@ -16,6 +16,7 @@ export async function POST(request: Request) {
         if (bullyingRating === null) {
             console.warn("Bullying check could not be performed or returned invalid data. Proceeding cautiously.");
         } else if (bullyingRating > BULLYING_THRESHOLD) {
+            console.log(bullyingRating?.toFixed(2))
             return Response.json(
                 {
                     success: false,
