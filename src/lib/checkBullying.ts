@@ -27,21 +27,42 @@ export async function checkBullying(content: string): Promise<number | null> {
     try {
         const result = await model.generateContent(bullyingPrompt);
         const responseText = result.response.text();
+        console.log("RAW GEMINI RESPONSE:", responseText);
 
-        let bullyingRating: number | null = null;
-        try {
-            // Attempt to parse the response as a number
-            const parsed = parseFloat(responseText.trim());
-            if (!isNaN(parsed)) {
-                bullyingRating = parsed;
-            } else {
-                console.warn("Gemini did not return a pure numerical rating:", responseText);
-            }
-        } catch (parseError) {
-            console.error("Error parsing Gemini response:", parseError);
+        const raw = responseText.trim();
+
+        // Extract first number between 0–10 even if Gemini adds text
+        const match = raw.match(/\b(10|[0-9])\b/);
+
+        if (!match) {
+            console.warn("Could not extract bullying rating from Gemini response:", raw);
+            return null;
         }
 
-        return bullyingRating;
+        const bullyingRating = Number(match[1]);
+
+        // clamp value between 0 and 10 (extra safety)
+        const safeRating = Math.min(10, Math.max(0, bullyingRating));
+
+        console.log("Bullying rating:", safeRating);
+        return safeRating;
+
+
+        // let bullyingRating: number | null = null;
+        // try {
+        //     // Attempt to parse the response as a number
+        //     const parsed = parseFloat(responseText.trim());
+        //     if (!isNaN(parsed)) {
+        //         bullyingRating = parsed;
+        //         console.log("The bully marks:",bullyingRating);
+        //     } else {
+        //         console.warn("Gemini did not return a pure numerical rating:", responseText);
+        //     }
+        // } catch (parseError) {
+        //     console.error("Error parsing Gemini response:", parseError);
+        // }
+        // console.log("The bully marks:",bullyingRating);
+        // return bullyingRating;
 
     } catch (apiError) {
         console.error("Error calling Gemini API for bullying detection:", apiError);

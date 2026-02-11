@@ -14,8 +14,19 @@ export async function POST(request: Request) {
         const bullyingRating = await checkBullying(content);
 
         if (bullyingRating === null) {
-            console.warn("Bullying check could not be performed or returned invalid data. Proceeding cautiously.");
+            if (bullyingRating === null) {
+                return Response.json(
+                    {
+                        success: false,
+                        message: "Message could not be verified for safety. Please try again."
+                    },
+                    { status: 400 }
+                );
+            }
+
+            // console.warn("Bullying check could not be performed or returned invalid data. Proceeding cautiously.");
         } else if (bullyingRating > BULLYING_THRESHOLD) {
+            // console.log(bullyingRating);
             console.log(bullyingRating?.toFixed(2))
             return Response.json(
                 {
